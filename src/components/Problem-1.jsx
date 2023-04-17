@@ -3,10 +3,44 @@ import React, {useState} from 'react';
 const Problem1 = () => {
 
     const [show, setShow] = useState('all');
+    const [todos, setTodos] = useState([]);;
+    const [name, setName] = useState('');
+    const [status, setStatus] = useState('');
 
     const handleClick = (val) =>{
         setShow(val);
     }
+ 
+    const handleFilter =(todo) => {
+        console.log("filter")
+        if(show === 'all'){
+            return true
+        }else if (show === 'active'){
+            return todo.status === "active"
+        }else{
+            return todo.status === "completed"
+        }
+    }
+
+    const handleSort = (a,b) =>{
+        if(a.status === 'active') return 1
+        if(b.status === 'completed') return 2
+        // if(a.status === 'active') return 3
+    }
+
+    const reset = () =>{
+        setName('')
+        setStatus('')
+    }
+
+    const handleSubmit = (e)=>{
+        e.preventDefault()
+
+        setTodos((prev)=>[...prev,{name,status}])
+        reset()
+
+    }
+
 
     return (
 
@@ -14,12 +48,12 @@ const Problem1 = () => {
             <div className="row justify-content-center mt-5">
                 <h4 className='text-center text-uppercase mb-5'>Problem-1</h4>
                 <div className="col-6 ">
-                    <form className="row gy-2 gx-3 align-items-center mb-4">
+                    <form onSubmit={handleSubmit} className="row gy-2 gx-3 align-items-center mb-4">
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Name"/>
+                            <input type="text" value={name} onChange={(e)=>setName(e.target.value)} className="form-control" placeholder="Name"/>
                         </div>
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Status"/>
+                            <input type="text" value={status} onChange={(e)=>setStatus(e.target.value)} className="form-control" placeholder="Status"/>
                         </div>
                         <div className="col-auto">
                             <button type="submit" className="btn btn-primary">Submit</button>
@@ -47,7 +81,19 @@ const Problem1 = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        
+                            {todos?.length > 0 && 
+                                todos
+                                .sort(handleSort)
+                                .filter(handleFilter)
+                                .map((todo)=>(
+                                    <tr>
+                                        <td>{todo.name}</td>
+                                        <td>{todo.status}</td>
+                                    </tr>
+                                ))
+                               
+                            }
+                            
                         </tbody>
                     </table>
                 </div>
